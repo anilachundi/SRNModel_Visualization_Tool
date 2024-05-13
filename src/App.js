@@ -1,28 +1,35 @@
 import React, { useState, useEffect , useRef } from 'react';
 import * as d3 from 'd3';
+import Chart from 'chart.js/auto';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import {Button,Button2} from './components/Button';
-// import { createRoot } from 'react-dom/client';
-// // import App from './App'; // Adjust the import path according to your file structure
-
-// const container = document.getElementById('root'); // The DOM element where your app will be mounted
-// const root = createRoot(container); // Create a root.
-
-// root.render(<App />);
+import './App.css';
 
 function App() {
   const [embeddingLayer, setEmbeddingLayer] = useState([]);
   const [hiddenLayer, setHiddenLayer] = useState([]);
   const [outputLayer, setOutputLayer] = useState([]);
+  const [leftActiveIndices, setLeftActiveIndices] = useState(new Set());
+
+
+  const embeddingLayerRefs = useRef(embeddingLayer.map(() => React.createRef()));
+  const hiddenLayerRefs = useRef(hiddenLayer.map(() => React.createRef()));
+  const outputLayerRefs = useRef(outputLayer.map(() => React.createRef()));
+
+
+  const handleButtonClick = (layerRefs, index) => {
+    const button = layerRefs.current[index].current;
+    return button.getBoundingClientRect();
+  };
+  
 
   
 
   // State for active status of hidden layer buttons
-  const [hiddenLayerActiveStatus, setHiddenLayerActiveStatus] = useState(Array(12).fill(true));
+  const [hiddenLayerActiveStatus, setHiddenLayerActiveStatus] = useState(Array(12).fill(false));
 
   const [leftActiveIndex, setLeftActiveIndex] = useState(null);
-  // const [middleActiveIndex, setMiddleActiveIndex] = useState(null);
   const [extensionActiveIndex, setExtensionActiveIndex] = useState(null);
   const [rightActiveIndex, setRightActiveIndex] = useState(null);
 
@@ -60,11 +67,10 @@ function App() {
   const svgRef = useRef(null);
 
   const calculateEndPos = (hiddenIndex) => {
-  // Constants for button layout - adjust these to match your actual layout
-  const initialTopPosition = 95; // Example starting Y position for the first button in the hidden layer
+  const initialTopPosition = 119; // Example starting Y position for the first button in the hidden layer
   const buttonHeight = 5; // Example button height
   const verticalSpacing = 37; // Space between buttons
-  const horizontalPosition = 850; // Example fixed X position for buttons in the hidden layer
+  const horizontalPosition = 720; // Example fixed X position for buttons in the hidden layer
 
   const yPos = initialTopPosition + hiddenIndex * (buttonHeight + verticalSpacing) + (buttonHeight / 2);
   
@@ -76,25 +82,60 @@ function App() {
   return endPos;
   };
 
+
+  const calculateOutputEndPos = (outputIndex) => {
+    const initialTopPosition = 70; // Example starting Y position for the first button in the output layer
+    const buttonHeight = 5; // Example button height
+    const verticalSpacing = 37; // Space between buttons
+    const horizontalPosition = 1202; // Example fixed X position for buttons in the output layer
+  
+    const yPos = initialTopPosition + outputIndex * (buttonHeight + verticalSpacing) + (buttonHeight);
+    
+    const endPos = {
+      x: horizontalPosition, // Center X of the button
+      y: yPos, // Center Y of the button
+    };
+  
+    return endPos;
+  };
+
   const drawLines = (startPos) => {
-    console.log('Drawing lines from:', startPos);
-    d3.select(svgRef.current).selectAll('line').remove(); // Clear existing lines
+    const svg = d3.select(svgRef.current);
+    svg.selectAll('line').remove(); // Clear existing lines before redrawing
   
     hiddenLayer.forEach((_, hiddenIndex) => {
-      console.log("hiddenIndex is: ", hiddenIndex);
-      if (hiddenLayerActiveStatus[hiddenIndex]) { // Check if the button is active/connected
-        console.log("entering if statement");
-        const endPos = calculateEndPos(hiddenIndex); // Calculate the end position based on the index
-        // Draw a line from startPos to endPos
-        console.log('Drawing lines to:', endPos);
-        d3.select(svgRef.current)
-          .append('line')
+      if (hiddenLayerActiveStatus[hiddenIndex]) {
+        const endPos = calculateEndPos(hiddenIndex);
+        const line = svg.append('line')
           .attr('x1', startPos.x)
           .attr('y1', startPos.y)
-          .attr('x2', endPos.x)
-          .attr('y2', endPos.y)
+          .attr('x2', startPos.x) // start animation from startPos
+          .attr('y2', startPos.y)
           .attr('stroke', 'black')
           .attr('stroke-width', 2);
+  
+        // Animate line drawing to endPos
+        line.transition()
+          .duration(500)
+          .attr('x2', endPos.x)
+          .attr('y2', endPos.y);
+  
+        if (rightActiveIndex !== null) {
+          const outputEndPos = calculateOutputEndPos(rightActiveIndex);
+          const outputLine = svg.append('line')
+            .attr('x1', endPos.x)
+            .attr('y1', endPos.y)
+            .attr('x2', endPos.x) // start animation from endPos
+            .attr('y2', endPos.y)
+            .attr('stroke', 'black')
+            .attr('stroke-width', 2);
+  
+          // Animate line drawing to outputEndPos
+          outputLine.transition()
+            .duration(500)
+            .attr('x2', outputEndPos.x)
+            .attr('y2', outputEndPos.y);
+        }
       }
     });
   };
@@ -119,7 +160,7 @@ function App() {
   }, [hiddenLayerActiveStatus]);
 
   return (
-    <div className="relative pb-10 min-h-screen">
+    <div className="App">
       <Header />
       <svg ref={svgRef} className="absolute top-0 left-0 w-full h-full" style={{zIndex: 1, pointerEvents: 'none'}}></svg>
       
@@ -193,10 +234,9 @@ function App() {
 
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
 
 export default App;
-

@@ -1,5 +1,14 @@
 .App {
   text-align: center;
+  display: flex; /* Ensuring it uses flex layout */
+  flex-direction: column; /* Stack children vertically */
+  min-height: 100vh; /* Minimum height to full viewport height */
+  position: relative; /* Needed for absolute children positioning */
+}
+
+.flex {
+  width: 100%; /* Ensure flex containers take full available width */
+  flex-grow: 1; /* Allows flex containers to expand to fill available space */
 }
 
 .App-logo {
@@ -11,6 +20,12 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+
+.header-title {
+  font-size: 32px;  /* Adjust font size as needed */
+  font-weight: bold;  /* Makes the font bold */
+  color: #333;  /* Sets the text color, change as needed */
 }
 
 .App-header {
@@ -35,4 +50,32 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+line {
+  transition: all 0.3s ease-out;
+}
+
+line.active {
+  stroke-opacity: 1;
+}
+
+line.inactive {
+  stroke-opacity: 0.1;
+}
+
+button {
+  transition: background-color 0.3s;
+}
+
+button.active {
+  background-color: #4CAF50; /* Green */
+}
+
+button.inactive {
+  background-color: #f44336; /* Red */
+}
+
+body {
+  background: linear-gradient(to right, #a3ebf6, #fdd2b2); /* Transition from pink to peach horizontally */
 }
