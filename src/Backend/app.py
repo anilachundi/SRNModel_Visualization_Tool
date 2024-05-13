@@ -38,9 +38,7 @@ def model_summary(model):
         "output_layer": {}
     }
     for name, module in model.named_modules():
-        if name:  # This skips the model itself which has an empty name
-            # Assuming your model's layer names include descriptive keys like "embedding", "hidden", and "output"
-            # Adjust these conditions based on your model's actual layer names
+        if name: 
             if "embedding" in name:
                 summary["embedding_layer"] = {
                     "name": name,
