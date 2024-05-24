@@ -79,3 +79,19 @@ button.inactive {
 body {
   background: linear-gradient(to right, #a3ebf6, #fdd2b2); /* Transition from pink to peach horizontally */
 }
+
+.previous-state {
+  margin-left: 300px; /* Adjust this value as needed */
+  margin-top: 80px;
+}
+
+.right-space {
+  margin-right: 300px;
+  margin-bottom: 500px;
+}
+
+.embedding-layer-margins {
+  margin-left: 100px;
+  margin-right: 200px;
+}
+
