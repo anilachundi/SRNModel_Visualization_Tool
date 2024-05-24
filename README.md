@@ -1,4 +1,4 @@
-# React App/Javascript Visualization of a Recurrent Neural Network Model
+# React App/Visualization of a Recurrent Neural Network Model
 
 This project is a javascript/css visualization of the UIUC Learning and Language Lab's AyB SRN Model, Bootstrapped with [Create React App](https://github.com/facebook/create-react-app). 
 
